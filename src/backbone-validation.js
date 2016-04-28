@@ -233,7 +233,7 @@ Backbone.Validation = (function(_){
         isValid: function(option) {
           var flattened, attrs, error, invalidAttrs;
 
-          option = option || getOptionsAttrs(options, view);
+          option = option || _.keys(view.model.validation());
 
           if(_.isString(option)){
             attrs = [option];
