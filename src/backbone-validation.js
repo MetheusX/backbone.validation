@@ -119,6 +119,24 @@ Backbone.Validation = (function(_){
         return attrs;
       }
     };
+    
+    //Returns all attributes that have a validator defined
+    var getValidationAttributes = function(model){
+      var validators = model.validation;
+
+      //Defined validators check
+      if(!validators){
+        return {};
+      }
+
+      //Return validators
+      if(_.isFunction(validators)){
+        validators = validators();
+      }
+
+      //Return all attributes defined in validators
+      return _.keys(validators);
+    };
 
 
     // Looks on the model for validations for a specified
@@ -233,7 +251,7 @@ Backbone.Validation = (function(_){
         isValid: function(option) {
           var flattened, attrs, error, invalidAttrs;
 
-          option = option || _.keys(view.model.validation());
+          option = option || getOptionsAttrs(options, view);
 
           if(_.isString(option)){
             attrs = [option];
@@ -273,7 +291,7 @@ Backbone.Validation = (function(_){
           var model = this,
               validateAll = !attrs,
               opt = _.extend({}, options, setOptions),
-              validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(options, view)),
+              validatedAttrs = validateAll ?  getValidatedAttrs(model, getValidationAttributes(model)) : getValidatedAttrs(model, getOptionsAttrs(options, view)),
               allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
               flattened = flatten(allAttrs),
               changedAttrs = attrs ? flatten(attrs) : flattened,
